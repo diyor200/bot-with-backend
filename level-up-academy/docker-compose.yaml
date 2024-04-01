@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"  # Map container port 80 (default) to host port 80
+    volumes:
+      - ./nginx.conf:/level_up_academy/nginx/nginx.conf
+
+  bot:
+    container_name: "backend"
+    build: .
+    restart: always
+    ports:
+      - 8001:8001
+    env_file:
+      - "level_up_academy/.env"
+    depends_on:
+      - db
+
+  db:
+    container_name: ${postgres_container}
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=level_up_academy_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=2001
+      - POSTGRES_HOST=localhost
